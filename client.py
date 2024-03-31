@@ -13,6 +13,7 @@ def start_client(host, port):
 
         if message.lower() == "quit":
             client_socket.close()
+            break
 
         response = client_socket.recv(data_payload).decode()
         print(f"Server: {response}")
