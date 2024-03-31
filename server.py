@@ -4,14 +4,18 @@ from threading import Thread
 backlog = 5
 data_payload = 2048
 
-def handle_client(client: socket, address):
+# handle each client thread
+def handle_client(client: socket, address): 
     while True:
-        data = client.recv(data_payload)
+        # gets input from client
+        data = client.recv(data_payload) 
 
-        if not data:
+        # if there is no message from the client close connection
+        if not data: 
             client.close()
             print(f"Connection with {address} closed")
             break
+        # if there is a message from the client print client address and message
         else:
             client_response = data.decode('utf-8')
             print(f"Message from {address}: {client_response}")
@@ -20,7 +24,7 @@ def handle_client(client: socket, address):
 
 def start_server(host, port):
     try:
-        # create TCP socket
+        # create server TCP socket
         server = socket(AF_INET, SOCK_STREAM) 
         server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 
@@ -31,10 +35,12 @@ def start_server(host, port):
         server.listen(backlog)
         print(f"Server listening on {host}:{port}")
 
+        # loop until server closes
         while True:
+            # accept client connections
             client_socket, client_address = server.accept()
             print(f"Accepted connection from {client_address}")
-
+            # create a thread to hold multiple clients
             client_thread = Thread(target = handle_client, args = (client_socket, client_address))
             client_thread.start()
     except KeyboardInterrupt:
